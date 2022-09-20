@@ -1,4 +1,3 @@
-from asyncio import streams
 from django.shortcuts import render
 from .models import Student
 from .serializers import StudentSerializer
@@ -42,4 +41,19 @@ def student_create(request):
         json_data = JSONRenderer().render(serializer.errors)
         return HttpResponse(json_data, content_type='application/json')
 
+def student_api(request):
+    if request.method == 'GET':
+        json_data = request.body
+        stream = io.BytesIO(json_data)
+        pythonData = JSONParser().parse(stream)
+        id = pythonData.get('id', None)
+        if id is not None:
+            stu = Student.objects.get(id=id)
+            serializer = StudentSerializer(stu)
+            json_data = JSONRenderer().render(serializer.data)
+            return HttpResponse(json_data, content_type='application/json')
 
+        stu = Student.objects.all()
+        serializer = StudentSerializer(stu, many=True)
+        json_data = JSONRenderer().render(serializer.data)
+        return HttpResponse(json_data, content_type='application/json')
