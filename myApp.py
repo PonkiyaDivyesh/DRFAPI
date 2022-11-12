@@ -1,7 +1,7 @@
 import requests
 import json
 
-URL = "http://192.168.1.8:8000/studentAPI/"
+URL = "http://127.0.0.1:8000/studentAPI/"
 
 def get_data(id = None):
     data = {}
